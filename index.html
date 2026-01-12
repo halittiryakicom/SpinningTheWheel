@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çekiliş Çarkı</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel/Winwheel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🎯 Çekiliş Çarkı</h1>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="input-group">
+                <input type="text" id="kisiEkleInput" placeholder="Katılımcı adı" autofocus>
+                <button class="btn btn-primary" onclick="addName()">Ekle</button>
+            </div>
+
+            <h3>Katılımcılar</h3>
+            <div id="participantsList" class="participants-list"></div>
+        </div>
+
+        <div class="wheel-section">
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="spinWheel()">Çarkı Çevir</button>
+                <button class="btn btn-secondary" onclick="spinAll()">Sıralama Yap</button>
+                <button class="btn btn-success" id="downloadBtn" onclick="downloadRanking()" style="display:none;">📥
+                    İndir</button>
+            </div>
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div id="rankingResult" class="ranking-result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 Emirhan Topal</p>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
