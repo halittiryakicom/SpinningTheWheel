@@ -13,10 +13,26 @@
 <body>
     <div class="header">
         <h1>🎯 Çekiliş Çarkı</h1>
+        <div class="class-selector">
+            <select id="classDropdown" onchange="switchClass()">
+                <option value="">Sınıf Seçiniz</option>
+            </select>
+            <button class="btn btn-small btn-primary" onclick="openClassModal()">+ Yeni Sınıf</button>
+        </div>
     </div>
 
     <div class="container">
         <div class="sidebar">
+            <div class="class-info" id="classInfo" style="display:none;">
+                <div class="class-header">
+                    <h3 id="currentClassName">Sınıf Adı</h3>
+                    <div class="class-actions">
+                        <button class="btn btn-icon" onclick="editClass()" title="Düzenle">✏️</button>
+                        <button class="btn btn-icon" onclick="deleteClass()" title="Sil">🗑️</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="input-group">
                 <input type="text" id="kisiEkleInput" placeholder="Katılımcı adı" autofocus>
                 <button class="btn btn-primary" onclick="addName()">Ekle</button>
@@ -35,6 +51,40 @@
             </div>
             <canvas id="canvas" width="500" height="500"></canvas>
             <div id="rankingResult" class="ranking-result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Sınıf Modal -->
+    <div id="classModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Yeni Sınıf Oluştur</h2>
+                <span class="close" onclick="closeClassModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="classNameInput" placeholder="Sınıf adı (örn: 6/A Bilişim Temelleri)" autofocus>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeClassModal()">İptal</button>
+                <button class="btn btn-primary" onclick="saveClass()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onay Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Onay</h2>
+                <span class="close" onclick="closeConfirmModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">İptal</button>
+                <button class="btn btn-danger" onclick="confirmAction()">Sil</button>
+            </div>
         </div>
     </div>
 
