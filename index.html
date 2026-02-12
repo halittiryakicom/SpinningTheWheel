@@ -76,6 +76,8 @@
                             <option value="percent-desc">Yüzde (yüksek → düşük)</option>
                             <option value="last-desc">Son seçilme (yeni → eski)</option>
                         </select>
+                        <button class="btn btn-primary btn-small" onclick="openManualEntryModal()">➕ Manuel
+                            Kayıt</button>
                         <button class="btn btn-danger btn-small" onclick="clearHistory()">🗑️ Geçmişi Temizle</button>
                     </div>
 
@@ -156,6 +158,43 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeConfirmModal()">İptal</button>
                 <button class="btn btn-danger" onclick="confirmAction()">Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manuel Kayıt Modal -->
+    <div id="manualEntryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Manuel Çekiliş Kaydı Ekle</h2>
+                <span class="close" onclick="closeManualEntryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="manualStudentSelect">Öğrenci Seçin:</label>
+                    <select id="manualStudentSelect" class="form-control">
+                        <option value="">Öğrenci seçiniz...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="manualTypeSelect">Çekiliş Türü:</label>
+                    <select id="manualTypeSelect" class="form-control">
+                        <option value="single">🎯 Tek Çekiliş</option>
+                        <option value="ranking">📊 Sıralama</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="manualDateInput">Tarih ve Saat:</label>
+                    <input type="datetime-local" id="manualDateInput" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="manualCountInput">Tekrar Sayısı: (Kaç kez eklensin)</label>
+                    <input type="number" id="manualCountInput" class="form-control" value="1" min="1" max="100">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeManualEntryModal()">İptal</button>
+                <button class="btn btn-primary" onclick="saveManualEntry()">Kaydet</button>
             </div>
         </div>
     </div>

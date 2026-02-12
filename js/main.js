@@ -709,13 +709,14 @@ function displayHistory() {
 
         const typeText = item.type === 'single' ? '🎯 Tek Çekiliş' : '📊 Sıralama';
         const date = new Date(item.timestamp).toLocaleString('tr-TR');
+        const manualBadge = item.manual ? '<span class="manual-badge">✏️ Manuel</span>' : '';
 
         div.innerHTML = `
             <div class="history-item-header">
                 <span class="history-item-name">${item.name}</span>
                 <span class="history-item-date">${date}</span>
             </div>
-            <div class="history-item-type">${typeText}</div>
+            <div class="history-item-type">${typeText} ${manualBadge}</div>
         `;
 
         historyList.appendChild(div);
@@ -753,4 +754,138 @@ function clearHistory() {
             alert('Geçmiş başarıyla temizlendi!');
         }
     );
+}
+
+// ========== MANUEL VERİ GİRİŞİ ==========
+
+// Manuel Kayıt Modal Açma
+function openManualEntryModal() {
+    if (!currentClassId || !classes[currentClassId]) {
+        alert('Lütfen önce bir sınıf seçin!');
+        return;
+    }
+
+    const classData = classes[currentClassId];
+    const participants = classData.participants || [];
+
+    if (participants.length === 0) {
+        alert('Sınıfta henüz öğrenci yok. Önce öğrenci ekleyin!');
+        return;
+    }
+
+    // Öğrenci listesini doldur
+    const select = document.getElementById('manualStudentSelect');
+    select.innerHTML = '<option value="">Öğrenci seçiniz...</option>';
+
+    participants.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+
+    // Varsayılan tarih olarak şimdiyi ayarla
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
+    document.getElementById('manualDateInput').value = localISOTime;
+
+    // Sayaç sıfırla
+    document.getElementById('manualCountInput').value = 1;
+
+    // Modal'ı aç
+    document.getElementById('manualEntryModal').style.display = 'block';
+}
+
+// Manuel Kayıt Modal Kapama
+function closeManualEntryModal() {
+    document.getElementById('manualEntryModal').style.display = 'none';
+}
+
+// Manuel Kayıt Kaydetme
+function saveManualEntry() {
+    const studentName = document.getElementById('manualStudentSelect').value;
+    const type = document.getElementById('manualTypeSelect').value;
+    const dateTimeStr = document.getElementById('manualDateInput').value;
+    const count = parseInt(document.getElementById('manualCountInput').value) || 1;
+
+    if (!studentName) {
+        alert('Lütfen bir öğrenci seçin!');
+        return;
+    }
+
+    if (!dateTimeStr) {
+        alert('Lütfen tarih ve saat girin!');
+        return;
+    }
+
+    if (count < 1 || count > 100) {
+        alert('Tekrar sayısı 1 ile 100 arasında olmalıdır!');
+        return;
+    }
+
+    if (!currentClassId || !classes[currentClassId]) return;
+
+    const classData = classes[currentClassId];
+    const timestamp = new Date(dateTimeStr).toISOString();
+
+    // İstatistik verisi oluştur veya güncelle
+    if (!classData.statistics) classData.statistics = {};
+    if (!classData.statistics[studentName]) {
+        classData.statistics[studentName] = {
+            count: 0,
+            lastSelected: null
+        };
+    }
+
+    // Belirtilen sayı kadar kayıt ekle
+    for (let i = 0; i < count; i++) {
+        classData.statistics[studentName].count++;
+
+        // Geçmiş kaydı ekle
+        if (!classData.history) classData.history = [];
+        classData.history.unshift({
+            name: studentName,
+            type: type,
+            timestamp: timestamp,
+            manual: true // Manuel eklendi işareti
+        });
+    }
+
+    classData.statistics[studentName].lastSelected = timestamp;
+
+    // Geçmişi sınırla (son 50 kayıt)
+    if (classData.history.length > 50) {
+        classData.history = classData.history.slice(0, 50);
+    }
+
+    saveToLocalStorage();
+
+    // Görünümü güncelle
+    updateStatsDisplay();
+    createCharts();
+    displayHistory();
+
+    closeManualEntryModal();
+
+    const countText = count > 1 ? `${count} kayıt` : '1 kayıt';
+    alert(`✅ ${studentName} için ${countText} başarıyla eklendi!`);
+}
+
+// Modal dışına tıklama ile kapatma güncellemesi
+const originalWindowOnClick = window.onclick;
+window.onclick = function (event) {
+    const classModal = document.getElementById('classModal');
+    const confirmModal = document.getElementById('confirmModal');
+    const manualEntryModal = document.getElementById('manualEntryModal');
+
+    if (event.target === classModal) {
+        closeClassModal();
+    }
+    if (event.target === confirmModal) {
+        closeConfirmModal();
+    }
+    if (event.target === manualEntryModal) {
+        closeManualEntryModal();
+    }
 }
