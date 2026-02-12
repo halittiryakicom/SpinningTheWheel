@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel/Winwheel.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -43,14 +44,85 @@
         </div>
 
         <div class="wheel-section">
-            <div class="buttons">
-                <button class="btn btn-primary" onclick="spinWheel()">Çarkı Çevir</button>
-                <button class="btn btn-secondary" onclick="spinAll()">Sıralama Yap</button>
-                <button class="btn btn-success" id="downloadBtn" onclick="downloadRanking()" style="display:none;">📥
-                    İndir</button>
+            <!-- Sekme Butonları -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('wheel')">🎯 Çark</button>
+                <button class="tab-btn" onclick="switchTab('stats')">📊 İstatistikler</button>
             </div>
-            <canvas id="canvas" width="500" height="500"></canvas>
-            <div id="rankingResult" class="ranking-result" style="display:none;"></div>
+
+            <!-- Çark Sekmesi -->
+            <div id="wheelTab" class="tab-content active">
+                <div class="buttons">
+                    <button class="btn btn-primary" onclick="spinWheel()">Çarkı Çevir</button>
+                    <button class="btn btn-secondary" onclick="spinAll()">Sıralama Yap</button>
+                    <button class="btn btn-success" id="downloadBtn" onclick="downloadRanking()"
+                        style="display:none;">📥
+                        İndir</button>
+                </div>
+                <canvas id="canvas" width="500" height="500"></canvas>
+                <div id="rankingResult" class="ranking-result" style="display:none;"></div>
+            </div>
+
+            <!-- İstatistik Sekmesi -->
+            <div id="statsTab" class="tab-content">
+                <div class="stats-container">
+                    <!-- İstatistik Kontrolleri -->
+                    <div class="stats-controls">
+                        <input type="text" id="searchInput" placeholder="🔍 Öğrenci ara..." oninput="filterStats()">
+                        <select id="sortSelect" onchange="sortStats()">
+                            <option value="name">İsme göre</option>
+                            <option value="count-desc">Seçilme sayısı (çok → az)</option>
+                            <option value="count-asc">Seçilme sayısı (az → çok)</option>
+                            <option value="percent-desc">Yüzde (yüksek → düşük)</option>
+                            <option value="last-desc">Son seçilme (yeni → eski)</option>
+                        </select>
+                        <button class="btn btn-danger btn-small" onclick="clearHistory()">🗑️ Geçmişi Temizle</button>
+                    </div>
+
+                    <!-- İstatistik Tablosu -->
+                    <div class="stats-table-container">
+                        <table class="stats-table" id="statsTable">
+                            <thead>
+                                <tr>
+                                    <th>Öğrenci</th>
+                                    <th>Seçilme</th>
+                                    <th>Yüzde</th>
+                                    <th>Son Seçilme</th>
+                                </tr>
+                            </thead>
+                            <tbody id="statsTableBody">
+                                <tr>
+                                    <td colspan="4" class="no-data">İstatistik verisi yok</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Grafikler -->
+                    <div class="charts-container">
+                        <div class="chart-box">
+                            <h3>📊 Seçilme Dağılımı</h3>
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h3>🥧 Seçilme Oranları</h3>
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Çekiliş Geçmişi -->
+                    <div class="history-container">
+                        <h3>📜 Son Çekilişler (Son 20)</h3>
+                        <div class="history-filters">
+                            <input type="text" id="historySearch" placeholder="🔍 Geçmişte ara..."
+                                oninput="filterHistory()">
+                        </div>
+                        <div class="history-list" id="historyList">
+                            <p class="no-data">Henüz çekiliş yapılmadı</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
