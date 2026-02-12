@@ -127,20 +127,14 @@ function spinWheel() {
 
 function alertWinner(indicatedSegment) {
     const winnerName = indicatedSegment.text;
-    alert("Kazanan: " + winnerName);
+    alert("🎉 Kazanan: " + winnerName);
 
     // İstatistik kaydı
     recordSelection(winnerName, 'single');
 
-    names = names.filter(name => name !== winnerName);
+    // Kazanan listeden silinmiyor, sadece istatistikler tutuluyor
+    // Çarkı sıfırla (durağan konumda)
     createWheel();
-    updateParticipantsList();
-
-    // Sınıf verilerini güncelle
-    if (currentClassId && classes[currentClassId]) {
-        classes[currentClassId].participants = names;
-        saveToLocalStorage();
-    }
 }
 
 function spinAll() {
